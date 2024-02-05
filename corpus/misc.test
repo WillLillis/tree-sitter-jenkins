@@ -1,0 +1,13 @@
+==========
+def with function result
+==========
+def x = foo "bar"
+---
+(source_file
+      (declaration
+        name: (identifier)
+        (value: 
+            (function_call
+                function: (_prefix_expression)
+                args: (arg_list 
+                    (string (string_content)))))))

@@ -271,14 +271,15 @@ module.exports = grammar({
     groovy_doc_tag: $ => 
       /@[a-z]+/,
 
-    declaration: $ => seq(
+    declaration: $ => prec.right(seq(
       optional($.annotation),
       optional($.access_modifier),
       repeat($.modifier),
       choice(field('type', $._type), 'def'),
       field('name', $.identifier),
       optional(seq('=', field('value', $._expression)))
-    ),
+      //optional($.assignment)
+    )),
 
     _expression: $ => choice(
       $.access_op,
@@ -353,8 +354,10 @@ module.exports = grammar({
     function_call: $ =>
       prec.left(2, seq( //higher precedence than juxt_function_call
         field('function', $._prefix_expression),
-        field('args', $.argument_list),
+        field('args', choice($._arg_list, $.argument_list)),
       )),
+
+    _arg_list: $ => list_of(choice($.map_item, $._expression)),
 
     argument_list: $ =>
       prec(1, seq(
